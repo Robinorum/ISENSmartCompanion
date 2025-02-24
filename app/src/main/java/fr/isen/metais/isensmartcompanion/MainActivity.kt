@@ -21,22 +21,70 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.isen.metais.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
 import androidx.compose.ui.res.colorResource
-
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ISENSmartCompanionTheme {
-                MainScreen()
+                val navController = rememberNavController()
+                MainScreen(navController)
             }
         }
     }
 }
 
+@Composable
+fun MainScreen(navController: NavHostController) {
+    Scaffold(
+        bottomBar = { BottomNavigationBar(navController) }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            NavigationGraph(navController)
+        }
+    }
+}
+
+@Composable
+fun NavigationGraph(navController: NavHostController) {
+    NavHost(navController, startDestination = "home") {
+        composable("home") { HomeScreen() }
+        composable("events") { EventsScreen() }
+        composable("history") { HistoryScreen() }
+    }
+}
+
+@Composable
+fun BottomNavigationBar(navController: NavHostController) {
+    NavigationBar {
+        NavigationBarItem(
+            icon = { Icon(painterResource(id = R.drawable.home), contentDescription = "Home") },
+            label = { Text("Home") },
+            selected = false,
+            onClick = { navController.navigate("home") }
+        )
+        NavigationBarItem(
+            icon = { Icon(painterResource(id = R.drawable.events), contentDescription = "Events") },
+            label = { Text("Events") },
+            selected = false,
+            onClick = { navController.navigate("events") }
+        )
+        NavigationBarItem(
+            icon = { Icon(painterResource(id = R.drawable.history), contentDescription = "History") },
+            label = { Text("History") },
+            selected = false,
+            onClick = { navController.navigate("history") }
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun HomeScreen() {
     val context = LocalContext.current
     var textState by remember { mutableStateOf("") }
 
@@ -57,7 +105,6 @@ fun MainScreen() {
                 contentDescription = "ISEN Logo",
                 modifier = Modifier.size(150.dp)
             )
-
 
             Spacer(modifier = Modifier.weight(1f))
             Row(
@@ -87,7 +134,8 @@ fun MainScreen() {
                 ) {
                     IconButton(
                         onClick = {
-                            Toast.makeText(context, "Texte: $textState", Toast.LENGTH_SHORT).show()},
+                            Toast.makeText(context, "Texte: $textState", Toast.LENGTH_SHORT).show()
+                        },
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
@@ -99,5 +147,25 @@ fun MainScreen() {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EventsScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "Events Screen", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+fun HistoryScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "History Screen", fontSize = 24.sp, fontWeight = FontWeight.Bold)
     }
 }
