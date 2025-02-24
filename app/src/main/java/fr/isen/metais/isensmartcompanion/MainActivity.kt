@@ -1,6 +1,7 @@
 package fr.isen.metais.isensmartcompanion
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -13,11 +14,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.isen.metais.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
+import androidx.compose.ui.res.colorResource
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,12 +37,13 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
+    val context = LocalContext.current
     var textState by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAF8FF)),
+            .background(colorResource(id = R.color.pink_background)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -59,7 +64,7 @@ fun MainScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .background(Color(0xffe1e2ec), shape = RoundedCornerShape(16.dp))
+                    .background(colorResource(id = R.color.text_area_color), shape = RoundedCornerShape(16.dp))
                     .padding(horizontal = 16.dp, vertical = 3.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -77,11 +82,12 @@ fun MainScreen() {
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .background(Color(0xffc41e21), shape = CircleShape),
+                        .background(colorResource(id = R.color.arrow_circle_color), shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     IconButton(
-                        onClick = { /* Action à définir */ },
+                        onClick = {
+                            Toast.makeText(context, "Texte: $textState", Toast.LENGTH_SHORT).show()},
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
