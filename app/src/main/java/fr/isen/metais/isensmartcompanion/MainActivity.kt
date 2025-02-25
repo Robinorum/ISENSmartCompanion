@@ -1,8 +1,10 @@
 package fr.isen.metais.isensmartcompanion
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
@@ -21,6 +23,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
 fun MainScreen(navController: androidx.navigation.NavHostController) {
