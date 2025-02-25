@@ -27,7 +27,7 @@ fun EventDetailPage(navController: NavController, event: Event) {
     ) {
         // Image en grand format
         Image(
-            painter = painterResource(id = R.drawable.placeholder),
+            painter = painterResource(id = event.image),
             contentDescription = event.title,
             modifier = Modifier
                 .width(200.dp)

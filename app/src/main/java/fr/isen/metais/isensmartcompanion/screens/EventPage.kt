@@ -41,6 +41,38 @@ data class Event(
     val description: String,
     val date: String,
     val location: String,
+    val category: String,
+    val image: Int = R.drawable.placeholder // Champ pour l'image, par défaut placeholder
+) {
+    companion object {
+        fun fromJsonEvent(jsonEvent: Event): Event {
+            val imageRes = when (jsonEvent.category) {
+                "BDE" -> R.drawable.bde
+                "BDS" -> R.drawable.sportif
+                "Technologique" -> R.drawable.puant
+                else -> R.drawable.isen_logo
+            }
+            return Event(
+                id = jsonEvent.id,
+                title = jsonEvent.title,
+                description = jsonEvent.description,
+                date = jsonEvent.date,
+                location = jsonEvent.location,
+                category = jsonEvent.category,
+                image = imageRes
+            )
+        }
+    }
+}
+
+
+@Serializable
+data class JsonEvent(
+    val id: String,
+    val title: String,
+    val description: String,
+    val date: String,
+    val location: String,
     val category: String
 )
 
@@ -54,7 +86,8 @@ fun EventsScreen(navController: NavController) {
             try {
                 val response = RetrofitInstance.api.getEvents()
                 if (response.isSuccessful) {
-                    val eventList = response.body() ?: emptyList()
+                    val jsonEvents = response.body() ?: emptyList()
+                    val eventList = jsonEvents.map { Event.fromJsonEvent(it) }
                     Log.d("Events", "Événements récupérés : $eventList")
                     events = eventList
                 } else {
@@ -86,33 +119,11 @@ fun EventsScreen(navController: NavController) {
             }
         }
 
-        FloatingActionButton(
-            onClick = { /* Ajout d'événement */ },
-            modifier = Modifier
-                .align(Alignment.BottomEnd) // Corrigé CenterEnd en BottomEnd
-                .padding(16.dp),
-            containerColor = Color(0xFFE91E63),
-            shape = CircleShape
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.add),
-                contentDescription = "Ajouter un événement",
-                tint = Color.White
-            )
-        }
     }
 }
 
 @Composable
 fun EventItem(event: Event, navController: NavController) {
-    // Sélection de l'image en fonction de la catégorie
-    val imageRes = when (event.category) {
-        "BDE" -> R.drawable.bde
-        "BDS" -> R.drawable.sportif
-        "Technologique" -> R.drawable.puant
-        else -> R.drawable.isen_logo // Fallback pour les autres catégories
-    }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,7 +142,7 @@ fun EventItem(event: Event, navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = imageRes), // Utilise l'image sélectionnée
+                painter = painterResource(id = event.image), // Utilise le champ image
                 contentDescription = event.title,
                 modifier = Modifier
                     .size(80.dp)
@@ -145,7 +156,6 @@ fun EventItem(event: Event, navController: NavController) {
                 modifier = Modifier.weight(1f)
             ) {
                 Text(text = event.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(text = event.description, fontSize = 14.sp, color = Color.Gray)
                 Text(text = "📅 ${event.date}", fontSize = 12.sp, color = Color.DarkGray)
                 Text(text = "📍 ${event.location}", fontSize = 12.sp, color = Color.DarkGray)
                 Text(text = "🎭 ${event.category}", fontSize = 12.sp, color = Color.DarkGray)
