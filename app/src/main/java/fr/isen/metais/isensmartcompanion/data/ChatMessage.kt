@@ -8,5 +8,6 @@ data class ChatMessage(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val text: String,
     val isFromUser: Boolean,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val conversationId: Int // Nouveau champ pour identifier la conversation
 )

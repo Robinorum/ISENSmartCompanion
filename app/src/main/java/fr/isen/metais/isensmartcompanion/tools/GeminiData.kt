@@ -10,6 +10,7 @@ import fr.isen.metais.isensmartcompanion.data.ChatMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -39,6 +40,9 @@ class GeminiViewModel(private val context: Context) : ViewModel() {
     private val _responseText = MutableStateFlow<String>("")
     val responseText: StateFlow<String> get() = _responseText
 
+    private val _currentConversationId = MutableStateFlow(1)
+    val currentConversationId: StateFlow<Int> get() = _currentConversationId
+
     private val apiKey = BuildConfig.GEMINI_API_KEY
     private val db = AppDatabase.getDatabase(context)
     private val chatDao = db.chatMessageDao()
@@ -50,9 +54,13 @@ class GeminiViewModel(private val context: Context) : ViewModel() {
         }
 
         viewModelScope.launch {
-            val userMessage = ChatMessage(text = message, isFromUser = true)
+            val userMessage = ChatMessage(
+                text = message,
+                isFromUser = true,
+                conversationId = _currentConversationId.value
+            )
             chatDao.insert(userMessage)
-            Log.d("GeminiViewModel", "Message utilisateur sauvegardé : ${userMessage.text}, ID : ${userMessage.id}")
+            Log.d("GeminiViewModel", "Message utilisateur sauvegardé : ${userMessage.text}, ConvID : ${_currentConversationId.value}")
         }
 
         val request = GeminiRequest(
@@ -66,9 +74,13 @@ class GeminiViewModel(private val context: Context) : ViewModel() {
                     val text = geminiResponse?.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text ?: "Pas de réponse"
                     _responseText.value = text
                     viewModelScope.launch {
-                        val aiMessage = ChatMessage(text = text, isFromUser = false)
+                        val aiMessage = ChatMessage(
+                            text = text,
+                            isFromUser = false,
+                            conversationId = _currentConversationId.value
+                        )
                         chatDao.insert(aiMessage)
-                        Log.d("GeminiViewModel", "Réponse IA sauvegardée : ${aiMessage.text}, ID : ${aiMessage.id}")
+                        Log.d("GeminiViewModel", "Réponse IA sauvegardée : ${aiMessage.text}, ConvID : ${_currentConversationId.value}")
                     }
                 } else {
                     _responseText.value = "Erreur : ${response.code()} - ${response.message()}"
@@ -85,15 +97,26 @@ class GeminiViewModel(private val context: Context) : ViewModel() {
         _responseText.value = ""
     }
 
-    fun clearConversation() {
+    fun startNewConversation() {
         viewModelScope.launch {
-            chatDao.deleteAll()
-            Log.d("GeminiViewModel", "Conversation effacée")
+            val existingIds = chatDao.getAllConversationIds().firstOrNull() ?: emptyList()
+            val newId = (existingIds.maxOrNull() ?: 0) + 1
+            _currentConversationId.value = newId
+            Log.d("GeminiViewModel", "Nouvelle conversation démarrée : $newId, Nombre de convs existantes : ${existingIds.size}")
         }
     }
 
-    fun getChatMessages(): Flow<List<ChatMessage>> { // Retour à Flow
-        return chatDao.getAllMessages()
+    fun resumeConversation(conversationId: Int) {
+        _currentConversationId.value = conversationId
+        Log.d("GeminiViewModel", "Conversation reprise immédiatement : $conversationId")
+    }
+
+    fun getChatMessages(conversationId: Int): Flow<List<ChatMessage>> {
+        return chatDao.getMessagesForConversation(conversationId)
+    }
+
+    fun getAllConversationIds(): Flow<List<Int>> {
+        return chatDao.getAllConversationIds()
     }
 
     fun deleteMessagePair(questionId: Long, answerId: Long?) {
@@ -103,6 +126,16 @@ class GeminiViewModel(private val context: Context) : ViewModel() {
             answerId?.let {
                 chatDao.deleteById(it)
                 Log.d("GeminiViewModel", "Réponse supprimée, ID : $it")
+            }
+        }
+    }
+
+    fun deleteConversation(conversationId: Int) {
+        viewModelScope.launch {
+            chatDao.deleteConversation(conversationId)
+            Log.d("GeminiViewModel", "Conversation supprimée : $conversationId")
+            if (_currentConversationId.value == conversationId) {
+                _currentConversationId.value = chatDao.getAllConversationIds().firstOrNull()?.maxOrNull() ?: 1
             }
         }
     }

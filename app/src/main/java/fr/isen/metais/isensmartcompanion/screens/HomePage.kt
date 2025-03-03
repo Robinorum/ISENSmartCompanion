@@ -1,5 +1,6 @@
 package fr.isen.metais.isensmartcompanion.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import fr.isen.metais.isensmartcompanion.R
 import fr.isen.metais.isensmartcompanion.data.ChatMessage
 import fr.isen.metais.isensmartcompanion.tools.GeminiViewModel
@@ -27,16 +29,25 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController, conversationId: Int? = null) {
     val context = LocalContext.current
-    val viewModel: GeminiViewModel = viewModel { GeminiViewModel(context) } // Déplacé ici
+    val viewModel: GeminiViewModel = viewModel { GeminiViewModel(context) }
     var textState by remember { mutableStateOf("") }
     val responseText by viewModel.responseText.collectAsState()
+    val currentConversationId by viewModel.currentConversationId.collectAsState()
     val chatMessages = remember { mutableStateListOf<ChatMessage>() }
     val listState = rememberLazyListState()
 
-    LaunchedEffect(Unit) {
-        viewModel.getChatMessages().collectLatest { messages ->
+    // Si un conversationId est fourni (depuis HistoryScreen), le définir comme actif
+    LaunchedEffect(conversationId) {
+        conversationId?.let {
+            viewModel.resumeConversation(it)
+        }
+    }
+
+    LaunchedEffect(currentConversationId) {
+        viewModel.getChatMessages(currentConversationId).collectLatest { messages ->
+            Log.d("HomeScreen", "Messages chargés pour ConvID $currentConversationId : $messages")
             chatMessages.clear()
             chatMessages.addAll(messages)
             if (messages.isNotEmpty()) {
@@ -48,12 +59,6 @@ fun HomeScreen() {
     LaunchedEffect(responseText) {
         if (responseText.isNotEmpty()) {
             viewModel.clearResponse()
-        }
-    }
-
-    LaunchedEffect(chatMessages.size) {
-        if (chatMessages.isNotEmpty()) {
-            listState.animateScrollToItem(chatMessages.size - 1)
         }
     }
 
@@ -99,14 +104,15 @@ fun HomeScreen() {
             ) {
                 IconButton(
                     onClick = {
-                        viewModel.clearConversation()
-                        chatMessages.clear()
+                        viewModel.startNewConversation()
+                        chatMessages.clear() // Réinitialisation explicite pour nouvelle conv
+                        Log.d("HomeScreen", "Après clic sur +, ConvID actuel : $currentConversationId")
                     },
                     modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.add),
-                        contentDescription = "Plus",
+                        contentDescription = "Nouvelle conversation",
                         tint = Color.White
                     )
                 }

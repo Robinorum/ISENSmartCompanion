@@ -5,26 +5,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import fr.isen.metais.isensmartcompanion.R
-import kotlinx.serialization.json.Json
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = "home") {
-        composable("home") { HomeScreen() }
+        composable("home") { HomeScreen(navController) }
+        composable("home/{conversationId}",
+            arguments = listOf(navArgument("conversationId") { type = androidx.navigation.NavType.IntType })) { backStackEntry ->
+            val conversationId = backStackEntry.arguments?.getInt("conversationId") ?: 1
+            HomeScreen(navController, conversationId)
+        }
         composable("events") { EventsScreen(navController) }
-        composable("history") { HistoryScreen() }
+        composable("history") { HistoryScreen(navController) }
         composable(
             route = "eventDetail/{eventJson}",
-            arguments = listOf(navArgument("eventJson") { type = NavType.StringType })
+            arguments = listOf(navArgument("eventJson") { type = androidx.navigation.NavType.StringType })
         ) { backStackEntry ->
-            val eventJson = backStackEntry.arguments?.getString("eventJson")
-            val event = eventJson?.let { Json.decodeFromString<Event>(it) }
+            val eventJson = backStackEntry.arguments?.getString("eventJson")?.let { java.net.URLDecoder.decode(it, "UTF-8") }
+            val event = eventJson?.let { kotlinx.serialization.json.Json.decodeFromString<Event>(it) }
             if (event != null) {
                 EventDetailPage(navController, event)
             } else {
@@ -37,7 +41,7 @@ fun NavigationGraph(navController: NavHostController) {
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val currentRoute = navBackStackEntry?.destination?.route?.substringBefore("/{") ?: navBackStackEntry?.destination?.route
 
     NavigationBar {
         NavigationBarItem(

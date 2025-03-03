@@ -10,11 +10,14 @@ interface ChatMessageDao {
     @Insert
     suspend fun insert(message: ChatMessage)
 
-    @Query("SELECT * FROM chat_messages ORDER BY timestamp ASC")
-    fun getAllMessages(): Flow<List<ChatMessage>>
+    @Query("SELECT * FROM chat_messages WHERE conversationId = :conversationId ORDER BY timestamp ASC")
+    fun getMessagesForConversation(conversationId: Int): Flow<List<ChatMessage>>
 
-    @Query("DELETE FROM chat_messages")
-    suspend fun deleteAll()
+    @Query("SELECT DISTINCT conversationId FROM chat_messages ORDER BY conversationId ASC")
+    fun getAllConversationIds(): Flow<List<Int>>
+
+    @Query("DELETE FROM chat_messages WHERE conversationId = :conversationId")
+    suspend fun deleteConversation(conversationId: Int)
 
     @Query("DELETE FROM chat_messages WHERE id = :id")
     suspend fun deleteById(id: Long)
