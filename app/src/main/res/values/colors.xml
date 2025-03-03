@@ -10,4 +10,5 @@
     <color name="arrow_circle_color">#ffc41e21</color>
     <color name="text_area_color">#ffe1e2ec</color>
     <color name="pink_background">#FFFAF8FF</color>
+    <color name="user_messages">#FFE91E63</color>
 </resources>

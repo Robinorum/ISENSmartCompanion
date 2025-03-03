@@ -17,37 +17,40 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fr.isen.metais.isensmartcompanion.R
+import fr.isen.metais.isensmartcompanion.data.ChatMessage
 import fr.isen.metais.isensmartcompanion.tools.GeminiViewModel
-
-data class ChatMessage(
-    val text: String,
-    val isFromUser: Boolean
-)
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
     val context = LocalContext.current
-    val viewModel: GeminiViewModel = viewModel()
+    val viewModel: GeminiViewModel = viewModel { GeminiViewModel(context) } // Déplacé ici
     var textState by remember { mutableStateOf("") }
     val responseText by viewModel.responseText.collectAsState()
     val chatMessages = remember { mutableStateListOf<ChatMessage>() }
     val listState = rememberLazyListState()
 
-    // Ajouter la réponse de l'IA quand elle arrive
+    LaunchedEffect(Unit) {
+        viewModel.getChatMessages().collectLatest { messages ->
+            chatMessages.clear()
+            chatMessages.addAll(messages)
+            if (messages.isNotEmpty()) {
+                listState.animateScrollToItem(messages.size - 1)
+            }
+        }
+    }
+
     LaunchedEffect(responseText) {
         if (responseText.isNotEmpty()) {
-            chatMessages.add(ChatMessage(responseText, isFromUser = false))
             viewModel.clearResponse()
         }
     }
 
-    // Scroll vers le bas quand chatMessages change
     LaunchedEffect(chatMessages.size) {
         if (chatMessages.isNotEmpty()) {
             listState.animateScrollToItem(chatMessages.size - 1)
@@ -86,7 +89,7 @@ fun HomeScreen() {
                 .background(colorResource(id = R.color.text_area_color), shape = RoundedCornerShape(16.dp))
                 .padding(horizontal = 16.dp, vertical = 3.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween // Pour espacer les boutons
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
                 modifier = Modifier
@@ -96,13 +99,14 @@ fun HomeScreen() {
             ) {
                 IconButton(
                     onClick = {
-                        chatMessages.clear() // Réinitialise la conversation
+                        viewModel.clearConversation()
+                        chatMessages.clear()
                     },
                     modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.reset),
-                        contentDescription = "Reset",
+                        painter = painterResource(id = R.drawable.add),
+                        contentDescription = "Plus",
                         tint = Color.White
                     )
                 }
@@ -112,13 +116,11 @@ fun HomeScreen() {
                 value = textState,
                 onValueChange = { textState = it },
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("   Entrez votre message") },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
+                placeholder = { Text("Entrez votre message") },
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
                 )
             )
 
@@ -131,7 +133,6 @@ fun HomeScreen() {
                 IconButton(
                     onClick = {
                         if (textState.isNotBlank()) {
-                            chatMessages.add(ChatMessage(textState, isFromUser = true))
                             viewModel.sendMessage(textState)
                             textState = ""
                         } else {
@@ -165,8 +166,7 @@ fun ChatMessageItem(message: ChatMessage) {
             colors = CardDefaults.cardColors(
                 containerColor = if (message.isFromUser) Color(0xFFE91E63) else Color.White
             ),
-            modifier = Modifier
-                .widthIn(max = 300.dp)
+            modifier = Modifier.widthIn(max = 300.dp)
         ) {
             Text(
                 text = message.text,

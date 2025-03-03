@@ -1,7 +1,17 @@
+import java.util.Properties // Ajout de l'import pour Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlinx.serialization)
+    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
+}
+
+// Charger local.properties
+val localProps = Properties()
+val localFile = rootProject.file("local.properties")
+if (localFile.exists()) {
+    localProps.load(localFile.inputStream())
 }
 
 android {
@@ -19,6 +29,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        // Ajout de la clé API dans BuildConfig
+        buildConfigField("String", "GEMINI_API_KEY", "\"${localProps.getProperty("geminiApiKey", "")}\"")
+
     }
 
     buildTypes {
@@ -39,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // Activation de BuildConfig
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -71,4 +85,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 }
