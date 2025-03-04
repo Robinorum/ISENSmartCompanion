@@ -8,7 +8,7 @@ import retrofit2.http.GET
 
 interface EventApiService {
     @GET("events.json")
-    suspend fun getEvents(): Response<List<Event>> // Changement en List<Event>
+    suspend fun getEvents(): Response<List<Event>>
 }
 
 object RetrofitInstance {

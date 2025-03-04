@@ -8,20 +8,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+
 import androidx.navigation.navArgument
 import fr.isen.metais.isensmartcompanion.R
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = "home") {
-        composable("home") { HomeScreen(navController) }
+        composable("home") { HomeScreen() }
         composable(
             "home/{conversationId}",
             arguments = listOf(navArgument("conversationId") { type = androidx.navigation.NavType.IntType })
         ) { backStackEntry ->
             val conversationId = backStackEntry.arguments?.getInt("conversationId") ?: 1
-            HomeScreen(navController, conversationId)
+            HomeScreen(conversationId)
         }
         composable("events") { EventsScreen(navController) }
         composable("history") { HistoryScreen(navController) }

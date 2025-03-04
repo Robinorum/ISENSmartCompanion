@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,6 +52,15 @@ fun HistoryScreen(navController: NavController) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+            Text(
+                text = "Voici toutes vos conversations archivées :\n\n",
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+
             if (conversationIds.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),

@@ -9,5 +9,5 @@ data class ChatMessage(
     val text: String,
     val isFromUser: Boolean,
     val timestamp: Long = System.currentTimeMillis(),
-    val conversationId: Int // Nouveau champ pour identifier la conversation
+    val conversationId: Int
 )

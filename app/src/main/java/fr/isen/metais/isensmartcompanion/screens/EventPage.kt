@@ -42,7 +42,7 @@ data class Event(
     val date: String,
     val location: String,
     val category: String,
-    val image: Int = R.drawable.placeholder // Champ pour l'image, par défaut placeholder
+    val image: Int = R.drawable.placeholder
 ) {
     companion object {
         fun fromJsonEvent(jsonEvent: Event): Event {
@@ -65,16 +65,6 @@ data class Event(
     }
 }
 
-
-@Serializable
-data class JsonEvent(
-    val id: String,
-    val title: String,
-    val description: String,
-    val date: String,
-    val location: String,
-    val category: String
-)
 
 @Composable
 fun EventsScreen(navController: NavController) {
@@ -142,7 +132,7 @@ fun EventItem(event: Event, navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = event.image), // Utilise le champ image
+                painter = painterResource(id = event.image),
                 contentDescription = event.title,
                 modifier = Modifier
                     .size(80.dp)

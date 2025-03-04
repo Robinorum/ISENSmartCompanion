@@ -135,7 +135,7 @@ fun DetailHistoryScreen(navController: NavController, conversationId: Int) {
             }
         }
 
-        // Pop-up de confirmation de suppression
+
         if (showDeleteDialog) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },

@@ -21,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import fr.isen.metais.isensmartcompanion.R
 import fr.isen.metais.isensmartcompanion.data.ChatMessage
 import fr.isen.metais.isensmartcompanion.gemini.GeminiViewModel
@@ -29,7 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController, conversationId: Int? = null) {
+fun HomeScreen(conversationId: Int? = null) {
     val context = LocalContext.current
     val viewModel: GeminiViewModel = viewModel { GeminiViewModel(context) }
     var textState by remember { mutableStateOf("") }
@@ -38,7 +37,7 @@ fun HomeScreen(navController: NavController, conversationId: Int? = null) {
     val chatMessages = remember { mutableStateListOf<ChatMessage>() }
     val listState = rememberLazyListState()
 
-    // Si un conversationId est fourni (depuis HistoryScreen), le définir comme actif
+
     LaunchedEffect(conversationId) {
         conversationId?.let {
             viewModel.resumeConversation(it)
@@ -123,10 +122,12 @@ fun HomeScreen(navController: NavController, conversationId: Int? = null) {
                 onValueChange = { textState = it },
                 modifier = Modifier.weight(1f),
                 placeholder = { Text("Entrez votre message") },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
                 )
             )
 
