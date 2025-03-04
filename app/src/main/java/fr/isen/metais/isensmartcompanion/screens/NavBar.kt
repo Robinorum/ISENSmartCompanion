@@ -16,13 +16,22 @@ import fr.isen.metais.isensmartcompanion.R
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen(navController) }
-        composable("home/{conversationId}",
-            arguments = listOf(navArgument("conversationId") { type = androidx.navigation.NavType.IntType })) { backStackEntry ->
+        composable(
+            "home/{conversationId}",
+            arguments = listOf(navArgument("conversationId") { type = androidx.navigation.NavType.IntType })
+        ) { backStackEntry ->
             val conversationId = backStackEntry.arguments?.getInt("conversationId") ?: 1
             HomeScreen(navController, conversationId)
         }
         composable("events") { EventsScreen(navController) }
         composable("history") { HistoryScreen(navController) }
+        composable(
+            "detailHistory/{conversationId}",
+            arguments = listOf(navArgument("conversationId") { type = androidx.navigation.NavType.IntType })
+        ) { backStackEntry ->
+            val conversationId = backStackEntry.arguments?.getInt("conversationId") ?: 1
+            DetailHistoryScreen(navController, conversationId)
+        }
         composable(
             route = "eventDetail/{eventJson}",
             arguments = listOf(navArgument("eventJson") { type = androidx.navigation.NavType.StringType })

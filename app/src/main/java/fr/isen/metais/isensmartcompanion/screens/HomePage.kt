@@ -24,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.isen.metais.isensmartcompanion.R
 import fr.isen.metais.isensmartcompanion.data.ChatMessage
-import fr.isen.metais.isensmartcompanion.tools.GeminiViewModel
+import fr.isen.metais.isensmartcompanion.gemini.GeminiViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)

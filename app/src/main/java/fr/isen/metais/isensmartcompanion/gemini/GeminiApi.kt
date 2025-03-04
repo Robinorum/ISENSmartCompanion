@@ -1,4 +1,4 @@
-package fr.isen.metais.isensmartcompanion.tools
+package fr.isen.metais.isensmartcompanion.gemini
 
 import retrofit2.Call
 import retrofit2.http.Body

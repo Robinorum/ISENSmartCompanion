@@ -1,4 +1,4 @@
-package fr.isen.metais.isensmartcompanion.tools
+package fr.isen.metais.isensmartcompanion.gemini
 
 import android.content.Context
 import android.util.Log
@@ -36,7 +36,7 @@ data class Candidate(
     val content: Content?
 )
 
-class GeminiViewModel(private val context: Context) : ViewModel() {
+class GeminiViewModel(context: Context) : ViewModel() {
     private val _responseText = MutableStateFlow<String>("")
     val responseText: StateFlow<String> get() = _responseText
 
@@ -117,6 +117,10 @@ class GeminiViewModel(private val context: Context) : ViewModel() {
 
     fun getAllConversationIds(): Flow<List<Int>> {
         return chatDao.getAllConversationIds()
+    }
+
+    suspend fun getLastMessageTimestamp(conversationId: Int): Long? {
+        return chatDao.getLastMessageTimestamp(conversationId)
     }
 
     fun deleteMessagePair(questionId: Long, answerId: Long?) {

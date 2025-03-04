@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.draw.clip
 import androidx.navigation.NavController
 import fr.isen.metais.isensmartcompanion.R
+import fr.isen.metais.isensmartcompanion.json.RetrofitInstance
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString

@@ -21,4 +21,8 @@ interface ChatMessageDao {
 
     @Query("DELETE FROM chat_messages WHERE id = :id")
     suspend fun deleteById(id: Long)
+
+    // Nouvelle méthode pour récupérer le dernier timestamp par conversation
+    @Query("SELECT MAX(timestamp) FROM chat_messages WHERE conversationId = :conversationId")
+    suspend fun getLastMessageTimestamp(conversationId: Int): Long?
 }

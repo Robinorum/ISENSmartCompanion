@@ -1,5 +1,6 @@
-package fr.isen.metais.isensmartcompanion.screens
+package fr.isen.metais.isensmartcompanion.json
 
+import fr.isen.metais.isensmartcompanion.screens.Event
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
