@@ -1,7 +1,6 @@
 package fr.isen.metais.isensmartcompanion.screens
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,26 +9,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.draw.clip
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.isen.metais.isensmartcompanion.R
-import fr.isen.metais.isensmartcompanion.json.RetrofitInstance
-import kotlinx.coroutines.launch
+import fr.isen.metais.isensmartcompanion.events.EventViewModel
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -65,30 +58,10 @@ data class Event(
     }
 }
 
-
 @Composable
 fun EventsScreen(navController: NavController) {
-    val coroutineScope = rememberCoroutineScope()
-    var events by remember { mutableStateOf<List<Event>>(emptyList()) }
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            try {
-                val response = RetrofitInstance.api.getEvents()
-                if (response.isSuccessful) {
-                    val jsonEvents = response.body() ?: emptyList()
-                    val eventList = jsonEvents.map { Event.fromJsonEvent(it) }
-                    Log.d("Events", "Événements récupérés : $eventList")
-                    events = eventList
-                } else {
-                    Log.e("Events", "Erreur HTTP : ${response.code()} - ${response.message()}")
-                }
-            } catch (e: Exception) {
-                Log.e("Events", "Exception : ${e.message}")
-                e.printStackTrace()
-            }
-        }
-    }
+    val eventViewModel: EventViewModel = viewModel()
+    val events by eventViewModel.events.collectAsState()
 
     Box(
         modifier = Modifier
@@ -108,7 +81,6 @@ fun EventsScreen(navController: NavController) {
                 }
             }
         }
-
     }
 }
 

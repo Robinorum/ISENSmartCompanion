@@ -25,6 +25,7 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable("events") { EventsScreen(navController) }
         composable("history") { HistoryScreen(navController) }
+        composable("agenda") { AgendaScreen(navController) }
         composable(
             "detailHistory/{conversationId}",
             arguments = listOf(navArgument("conversationId") { type = androidx.navigation.NavType.IntType })
@@ -70,6 +71,12 @@ fun BottomNavigationBar(navController: NavHostController) {
             label = { Text("History") },
             selected = currentRoute == "history",
             onClick = { navController.navigate("history") }
+        )
+        NavigationBarItem(
+            icon = { Icon(painterResource(id = R.drawable.agenda), contentDescription = "Agenda") },
+            label = { Text("Agenda") },
+            selected = currentRoute == "agenda",
+            onClick = { navController.navigate("agenda") }
         )
     }
 }

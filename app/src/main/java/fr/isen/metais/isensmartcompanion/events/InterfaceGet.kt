@@ -1,4 +1,4 @@
-package fr.isen.metais.isensmartcompanion.json
+package fr.isen.metais.isensmartcompanion.events
 
 import fr.isen.metais.isensmartcompanion.screens.Event
 import retrofit2.Response
