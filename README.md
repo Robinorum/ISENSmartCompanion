@@ -31,7 +31,7 @@ Commençons et plongeons dans l'application :
 - Vous pouvez le "pin", ce qui vous enverra une notification de rappel 10 secondes après
 
 - Vous pouvez aussi le partager a des amis, grâce à l'icone "share". Vous pourrez donc partager un texte-résumé dans l'application de votre choix
-
+\n\n
 **Agenda** : 
 
 - Vous pouvez retrouver tout les évenements que vous avez "pin". Il n'y a que l'année 2024 vu que tout les evenements se passe en 2024, c'etait inutile de rajouter le reste.
