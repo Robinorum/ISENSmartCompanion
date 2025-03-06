@@ -185,7 +185,7 @@ fun AgendaScreen(navController: NavController) {
 
         if (monthEvents.isEmpty()) {
             Text(
-                text = "Aucun événement liké ce mois-ci",
+                text = "Aucun événement épinglé ce mois-ci",
                 fontSize = 18.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
