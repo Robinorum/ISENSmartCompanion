@@ -38,7 +38,7 @@ Commençons et plongeons dans l'application :
 
 - Vous pouvez naviguer entre les mois grâce aux flèches, et si un evenement à lieu durant le mois selectionné, le jour précis sera surligné, et la carte de l'évenement apparaitra en bas de la page, carte qui est aussi cliquable, pour acceder aux details de l'évenement.
 
-**Favicon** : Vous remarquerez que l'application dispose d'une icone personalisée ! Petit détail qui fait souvent la différence.
+**Favicon** : Vous remarquerez que l'application dispose d'une icone personalisée ! Petit détail qui fait souvent la différence et qui vaut bien un +5 à la note finale.
 
 
 
