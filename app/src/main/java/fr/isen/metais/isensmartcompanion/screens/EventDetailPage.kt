@@ -71,10 +71,11 @@ fun EventDetailPage(navController: NavController, event: Event) {
             }
 
             Row {
-                // Bouton de partage
+
                 IconButton(
                     onClick = { shareEvent(context, event) },
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier
+                        .size(36.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.share),
@@ -83,7 +84,7 @@ fun EventDetailPage(navController: NavController, event: Event) {
                     )
                 }
 
-                // Bouton de notification
+
                 IconButton(
                     onClick = {
                         isNotified = !isNotified
@@ -135,7 +136,7 @@ fun EventDetailPage(navController: NavController, event: Event) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Détails
+
         Text(text = "📅 ${event.date}", fontSize = 16.sp, color = Color.Gray)
         Text(text = "📍 ${event.location}", fontSize = 16.sp, color = Color.Gray)
         Text(text = "🎭 ${event.category}", fontSize = 16.sp, color = Color.Gray)

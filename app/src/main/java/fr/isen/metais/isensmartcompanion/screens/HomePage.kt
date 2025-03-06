@@ -33,7 +33,6 @@ import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import java.util.concurrent.TimeUnit
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(conversationId: Int? = null) {
     val context = LocalContext.current

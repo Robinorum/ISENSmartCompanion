@@ -36,7 +36,6 @@ fun HistoryScreen(navController: NavController) {
             Log.d("HistoryScreen", "IDs des conversations : $ids")
             conversationIds.clear()
             conversationIds.addAll(ids)
-            // Récupérer les derniers timestamps pour chaque conversation
             ids.forEach { id ->
                 val lastTimestamp = viewModel.getLastMessageTimestamp(id)
                 lastMessageTimestamps[id] = lastTimestamp

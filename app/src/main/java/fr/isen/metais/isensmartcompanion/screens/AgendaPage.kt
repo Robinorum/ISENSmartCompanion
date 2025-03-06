@@ -69,7 +69,7 @@ fun AgendaScreen(navController: NavController) {
             .background(Color.White)
             .padding(16.dp)
     ) {
-        // Navigation des mois
+        // navigation des mois
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
