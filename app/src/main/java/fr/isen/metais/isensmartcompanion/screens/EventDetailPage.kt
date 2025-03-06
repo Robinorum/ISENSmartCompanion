@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -22,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -46,71 +49,127 @@ fun EventDetailPage(navController: NavController, event: Event) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = event.image),
-                contentDescription = event.title,
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
-            )
 
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             IconButton(
-                onClick = {
-                    isNotified = !isNotified
-                    with(sharedPreferences.edit()) {
-                        putBoolean(notificationKey, isNotified)
-                        apply()
-                    }
-                    if (isNotified) {
-                        Log.d("EventDetailPage", "Notification planifiée pour ${event.title}")
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            Log.d("EventDetailPage", "Tentative d'envoi de la notification pour ${event.title}")
-                            sendNotification(context, event)
-                        }, 10_000)
-                    }
-                },
+                onClick = { navController.popBackStack() },
                 modifier = Modifier.size(36.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.pin),
-                    contentDescription = "Notifier cet événement",
-                    tint = if (isNotified) Color.Red else Color.Gray
+                    painter = painterResource(id = R.drawable.back),
+                    contentDescription = "Retour",
+                    tint = Color.Gray
                 )
+            }
+
+            Row {
+                // Bouton de partage
+                IconButton(
+                    onClick = { shareEvent(context, event) },
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.share),
+                        contentDescription = "Partager cet événement",
+                        tint = Color.Gray
+                    )
+                }
+
+                // Bouton de notification
+                IconButton(
+                    onClick = {
+                        isNotified = !isNotified
+                        with(sharedPreferences.edit()) {
+                            putBoolean(notificationKey, isNotified)
+                            apply()
+                        }
+                        if (isNotified) {
+                            Log.d("EventDetailPage", "Notification planifiée pour ${event.title}")
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                Log.d("EventDetailPage", "Tentative d'envoi de la notification pour ${event.title}")
+                                sendNotification(context, event)
+                            }, 10_000)
+                        }
+                    },
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.pin),
+                        contentDescription = "Notifier cet événement",
+                        tint = if (isNotified) Color.Red else Color.Gray
+                    )
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = event.title, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Image(
+            painter = painterResource(id = event.image),
+            contentDescription = event.title,
+            modifier = Modifier
+                .width(200.dp)
+                .height(200.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .align(Alignment.CenterHorizontally),
+            contentScale = ContentScale.Crop
+        )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
+        Text(
+            text = event.title,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Détails
         Text(text = "📅 ${event.date}", fontSize = 16.sp, color = Color.Gray)
         Text(text = "📍 ${event.location}", fontSize = 16.sp, color = Color.Gray)
         Text(text = "🎭 ${event.category}", fontSize = 16.sp, color = Color.Gray)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = event.description, fontSize = 18.sp)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { navController.popBackStack() },
+        Text(
+            text = event.description,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Retour")
-        }
+        )
     }
+}
+
+
+private fun shareEvent(context: Context, event: Event) {
+    val shareMessage = """
+         ${event.title}
+        📆 Date: ${event.date}
+        📍 Lieu: ${event.location}
+        
+        
+        Venez vite à cet événement avant que je me fâche !!!
+    """.trimIndent()
+
+    val sendIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, shareMessage)
+        type = "text/plain"
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, "Partager l'événement")
+    context.startActivity(shareIntent)
 }
 
 private fun createNotificationChannel(context: Context) {

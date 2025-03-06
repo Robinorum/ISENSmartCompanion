@@ -80,7 +80,7 @@ fun AgendaScreen(navController: NavController) {
                     selectedMonth = Calendar.getInstance().apply {
                         time = selectedMonth.time
                         add(Calendar.MONTH, -1)
-                        if (get(Calendar.YEAR) < 2024) set(2024, 0, 1) // Limite à janvier 2024
+                        if (get(Calendar.YEAR) < 2024) set(2024, 0, 1) // Limite à janvier 2024 (aucun evenement avant)
                     }
                 }
             ) {
@@ -102,7 +102,7 @@ fun AgendaScreen(navController: NavController) {
                     selectedMonth = Calendar.getInstance().apply {
                         time = selectedMonth.time
                         add(Calendar.MONTH, 1)
-                        if (get(Calendar.YEAR) > 2024) set(2024, 11, 1) // Limite à décembre 2024
+                        if (get(Calendar.YEAR) > 2024) set(2024, 11, 1) // Limite à décembre 2024 (aucun evenement après)
                     }
                 }
             ) {
@@ -116,7 +116,7 @@ fun AgendaScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // En-tête des jours de la semaine
+        //affichage jours de la semaine en haut de la page
         Row(modifier = Modifier.fillMaxWidth()) {
             listOf("Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam").forEach { day ->
                 Text(
@@ -129,10 +129,10 @@ fun AgendaScreen(navController: NavController) {
             }
         }
 
-        // Grille des jours
+        //grille de jours
         Column {
             val totalCells = daysInMonth + firstDayOfMonth
-            val rows = (totalCells + 6) / 7 // Nombre de lignes nécessaires
+            val rows = (totalCells + 6) / 7
             for (row in 0 until rows) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     for (col in 0 until 7) {
@@ -182,7 +182,7 @@ fun AgendaScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Liste des événements "likés" pour le mois
+
         if (monthEvents.isEmpty()) {
             Text(
                 text = "Aucun événement liké ce mois-ci",

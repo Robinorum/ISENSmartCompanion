@@ -1,5 +1,4 @@
 package fr.isen.metais.isensmartcompanion.events
-
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +6,7 @@ import fr.isen.metais.isensmartcompanion.screens.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+
 
 class EventViewModel : ViewModel() {
     private val _events = MutableStateFlow<List<Event>>(emptyList())
@@ -34,4 +34,6 @@ class EventViewModel : ViewModel() {
             }
         }
     }
+
 }
+

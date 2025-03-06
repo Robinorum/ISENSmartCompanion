@@ -1,6 +1,7 @@
 package fr.isen.metais.isensmartcompanion.screens
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -62,6 +63,8 @@ data class Event(
 fun EventsScreen(navController: NavController) {
     val eventViewModel: EventViewModel = viewModel()
     val events by eventViewModel.events.collectAsState()
+    Log.d("EventViewModel", "JSON brut reçu : $events")
+
 
     Box(
         modifier = Modifier

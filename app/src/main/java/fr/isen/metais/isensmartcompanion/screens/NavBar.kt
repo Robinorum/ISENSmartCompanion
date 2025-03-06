@@ -61,7 +61,7 @@ fun BottomNavigationBar(navController: NavHostController) {
             onClick = { navController.navigate("home") }
         )
         NavigationBarItem(
-            icon = { Icon(painterResource(id = R.drawable.events), contentDescription = "Events") },
+            icon = { Icon(painterResource(id = R.drawable.event), contentDescription = "Events") },
             label = { Text("Events") },
             selected = currentRoute == "events",
             onClick = { navController.navigate("events") }

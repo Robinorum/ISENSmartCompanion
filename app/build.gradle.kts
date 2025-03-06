@@ -88,5 +88,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation("nl.dionsegijn:konfetti-compose:2.0.5")
     ksp(libs.androidx.room.compiler)
 }
