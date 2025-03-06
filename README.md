@@ -31,14 +31,14 @@ Commençons et plongeons dans l'application :
 - Vous pouvez le "pin", ce qui vous enverra une notification de rappel 10 secondes après
 
 - Vous pouvez aussi le partager a des amis, grâce à l'icone "share". Vous pourrez donc partager un texte-résumé dans l'application de votre choix
-\n\n
+
 **Agenda** : 
 
 - Vous pouvez retrouver tout les évenements que vous avez "pin". Il n'y a que l'année 2024 vu que tout les evenements se passe en 2024, c'etait inutile de rajouter le reste.
 
 - Vous pouvez naviguer entre les mois grâce aux flèches, et si un evenement à lieu durant le mois selectionné, le jour précis sera surligné, et la carte de l'évenement apparaitra en bas de la page, carte qui est aussi cliquable, pour acceder aux details de l'évenement.
 
-**Favicon** : Vous remarquerez que l'application dispose d'une icone personalisée ! Petit détail qui fait souvent la différence et qui vaut bien un +5 à la note finale.
+\n\n**Favicon** : Vous remarquerez que l'application dispose d'une icone personalisée ! Petit détail qui fait souvent la différence et qui vaut bien un +5 à la note finale.
 
 
 
